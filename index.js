@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
+const MENTION_REPLY_MSG_LIST = process.env.MENTION_REPLY_MSG_LIST.split(',');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -28,12 +29,21 @@ const flatten = ([...array]) => {
     return buff;
 }
 
+const getMentionReplyMsg = () => {
+    const index = Math.floor(Math.random() * MENTION_REPLY_MSG_LIST.length)
+    return MENTION_REPLY_MSG_LIST[index];
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('message', async msg => {
     const [command, ...args] = msg.content.split(' ');
+    if (msg.mentions.users.some(user => user.id === client.user.id)) {
+        msg.reply(getMentionReplyMsg());
+        return;
+    }
 
     switch (command) {
         case 'ng_clear':
