@@ -61,15 +61,21 @@ client.on('message', async msg => {
             ng_words[msg.author.username].push(args[0]);
             msg.reply(`${msg.author.username}さんのNGワード"${args[0]}"を保存しました`);
             if (Object.values(ng_words).every(words => words.length === max_ng_word_num)) {
-                const shuffled_ng_words = shuffle(flatten(Object.values(ng_words)));
-                Object.keys(ng_words).forEach((key, index) => ng_words[key] = shuffled_ng_words[index]);
-                Object.keys(ng_words).forEach(username => {
-                    const str =
-                        Object.entries(ng_words)
-                            .filter(([username2, _]) => username2 != username)
-                            .reduce((acc, [username2, word]) => acc += `${username2}：${word}\n`, '')
-                    dm_channels[username].send("他の人のNGワードです：\n" + str);
-                });
+                while (true) {
+                    const shuffled_ng_words = shuffle(flatten(Object.values(ng_words)));
+                    const isSame = Object.keys(ng_words).some((key, index) => ng_words[key].some(word => word === shuffled_ng_words[index]));
+                    if (isSame === false) {
+                        Object.keys(ng_words).forEach((key, index) => ng_words[key] = shuffled_ng_words[index]);
+                        Object.keys(ng_words).forEach(username => {
+                            const str =
+                                Object.entries(ng_words)
+                                    .filter(([username2, _]) => username2 != username)
+                                    .reduce((acc, [username2, word]) => acc += `${username2}：${word}\n`, '')
+                            dm_channels[username].send("他の人のNGワードです：\n" + str);
+                        });
+                        break;
+                    }
+                }
                 main_channel.send("ngワードゲームを開始します");
             }
             break;
