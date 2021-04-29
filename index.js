@@ -46,9 +46,11 @@ client.on('message', async msg => {
     }
 
     switch (command) {
-        case 'ng_clear':
+        case 'ng_end':
+            const str2 = Object.entries(ng_words).reduce((acc, [username, words]) => acc += `${username}：${words.reduce((acc, word) => acc += '\n' + word, '')}\n\n`, '');
+            main_channel.send("ゲーム終了！\n各プレイヤーが登録したNGワード：\n" + str2);
             ng_words = {};
-            msg.channel.send("NGワードゲームデータをクリアしました");
+            ng_words_result = {};
             break;
 
         case 'ng_send':
@@ -65,10 +67,11 @@ client.on('message', async msg => {
                     const shuffled_ng_words = shuffle(flatten(Object.values(ng_words)));
                     const isSame = Object.keys(ng_words).some((key, index) => ng_words[key].some(word => word === shuffled_ng_words[index]));
                     if (isSame === false) {
-                        Object.keys(ng_words).forEach((key, index) => ng_words[key] = shuffled_ng_words[index]);
-                        Object.keys(ng_words).forEach(username => {
+                        const ng_words_result = {};
+                        Object.keys(ng_words).forEach((key, index) => ng_words_result[key] = shuffled_ng_words[index]);
+                        Object.keys(ng_words_result).forEach(username => {
                             const str =
-                                Object.entries(ng_words)
+                                Object.entries(ng_words_result)
                                     .filter(([username2, _]) => username2 != username)
                                     .reduce((acc, [username2, word]) => acc += `${username2}：${word}\n`, '')
                             dm_channels[username].send("他の人のNGワードです：\n" + str);
