@@ -9,6 +9,10 @@ let ng_words = {};
 let max_ng_word_num = 0;
 let dm_channels = {};
 
+const http = require('http');
+http.createServer(function (_, response) {
+    response.end('Discord bot is active now.');
+}).listen(3000);
 
 const shuffle = ([...array]) => {
     for (let i = array.length - 1; i >= 0; i--) {
