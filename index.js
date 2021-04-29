@@ -1,4 +1,6 @@
-const TOKEN = 'Botのトークンを入れてね';
+require('dotenv').config();
+
+const TOKEN = process.env.DISCORD_BOT_TOKEN;
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
